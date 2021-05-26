@@ -2,6 +2,7 @@
 import os
 import random
 import shutil
+import sys
 
 """
 human = Chihuahua cls = n02085620
@@ -44,42 +45,42 @@ def get_human_labels():
             print("human = {} cls = {}".format(human, cls))
 
 
-def setup_training_data():
-    src_datadirs=["train"]
+def setup_training_data(original_data_dir):
+    #src_datadirs=["train"]
 
     if not os.path.exists(top_dst_dir):
         os.makedirs(top_dst_dir)
 
-    for src_dir in src_datadirs:
-        bname = os.path.basename(src_dir)
-        print("bname",bname)
-        if not os.path.exists(top_dst_dir):
-            os.makedirs(top_dst_dir)
-        dst_dir = os.path.join(top_dst_dir, bname)
-        if not os.path.exists(dst_dir):
-            os.makedirs(dst_dir)
+    #for src_dir in src_datadirs:
+    src_dir = os.path.join(original_data_dir, "train")
+    bname = os.path.basename(src_dir)
+    print("bname",bname)
+    if not os.path.exists(top_dst_dir):
+        os.makedirs(top_dst_dir)
+    dst_dir = os.path.join(top_dst_dir, bname)
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
 
-        print("dst_dir", dst_dir)
-        for src_fname in os.listdir(src_dir):
-            dst_label = label_for_class(src_fname)
-            if not dst_label:
-                continue
+    print("dst_dir", dst_dir)
+    for src_fname in os.listdir(src_dir):
+        dst_label = label_for_class(src_fname)
+        if not dst_label:
+            continue
 
-            dst_label_dir = dst_path = os.path.join(dst_dir,dst_label)
-            if not os.path.exists(dst_label_dir):
-                os.makedirs(dst_label_dir)
+        dst_label_dir = dst_path = os.path.join(dst_dir,dst_label)
+        if not os.path.exists(dst_label_dir):
+            os.makedirs(dst_label_dir)
 
-            image_src_dir = os.path.join(src_dir, src_fname, "images")
-            for image_fname in os.listdir(image_src_dir):
-                src_path = os.path.join(image_src_dir, image_fname)
-                dst_path = os.path.join(dst_label_dir, image_fname)
-                print("copy {} to {}".format(src_path, dst_path))
+        image_src_dir = os.path.join(src_dir, src_fname, "images")
+        for image_fname in os.listdir(image_src_dir):
+            src_path = os.path.join(image_src_dir, image_fname)
+            dst_path = os.path.join(dst_label_dir, image_fname)
+            print("copy {} to {}".format(src_path, dst_path))
 
-                try:
-                    shutil.copy(src_path, dst_path)
-                except IOError as e:
-                    print("Error copying file from {} to {}: {}".format(src_path, dst_path, e))
-
+            try:
+                shutil.copy(src_path, dst_path)
+            except IOError as e:
+                print("Error copying file from {} to {}: {}".format(src_path, dst_path, e))
 
 
 def read_validation_labels(val_labels_path):
@@ -94,12 +95,11 @@ def read_validation_labels(val_labels_path):
     return labels
 
 
-def setup_validation_data():
+def setup_validation_data(original_data_dir):
     validation_dir = "val"
-    test_data_dir = "test"
-    image_src_dir = os.path.join(validation_dir, "images")
+    image_src_dir = os.path.join(original_data_dir, validation_dir, "images")
 
-    labels = read_validation_labels(os.path.join(validation_dir, "val_annotations.txt"))
+    labels = read_validation_labels(os.path.join(original_data_dir, validation_dir, "val_annotations.txt"))
     print("# validation images=", len(labels))
 
     for image_fname in os.listdir(image_src_dir):
@@ -154,10 +154,15 @@ def setup_test_data():
                 print("Error moving file from {} to {}: {}".format(src_path, dst_path, e))
 
 
-
 def main():
-    setup_training_data()
-    setup_validation_data()
+    if len(sys.argv) < 2:
+        print("Please specify original dataset directory")
+        return
+    else:
+        original_data_dir = sys.argv[1]
+
+    setup_training_data(original_data_dir)
+    setup_validation_data(original_data_dir)
     setup_test_data()
 
 
