@@ -73,8 +73,8 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
             if phase == 'validation':
                 prefix = 'val_'
 
-            logs[prefix + 'log loss'] = epoch_loss.item()
-            logs[prefix + 'accuracy'] = epoch_acc.item()
+            logs[prefix + 'log loss'] = epoch_loss
+            logs[prefix + 'accuracy'] = epoch_acc
 
         print()
 
