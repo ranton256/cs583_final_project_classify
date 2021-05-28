@@ -46,12 +46,9 @@ def get_human_labels():
 
 
 def setup_training_data(original_data_dir):
-    #src_datadirs=["train"]
-
     if not os.path.exists(top_dst_dir):
         os.makedirs(top_dst_dir)
 
-    #for src_dir in src_datadirs:
     src_dir = os.path.join(original_data_dir, "train")
     bname = os.path.basename(src_dir)
     print("bname",bname)
