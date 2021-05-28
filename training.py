@@ -124,7 +124,7 @@ def visualize_model(model, dataloaders, class_names, device, num_images=6):
 # This find_lr code is based on example code from the book
 # "Programming PyTorch for Deep Learning" by Ian ointer (O'Reilly).
 # Copyright 2019 Ian Pointer
-def find_lr(model, train_loader, loss_fn, optimizer, init_value=1e-8, final_value=10.0):
+def find_lr(model, train_loader, device, loss_fn, optimizer, init_value=1e-8, final_value=10.0):
     number_in_epoch = len(train_loader) - 1
     update_step = (final_value / init_value) ** (1 / number_in_epoch)
     lr = init_value
