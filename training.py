@@ -78,6 +78,9 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
 
         print()
 
+        liveloss.update(logs)
+        liveloss.send()
+
     time_elapsed = time.time() - since
     print('Training complete in {:.0f}m {:.0f}s'.format(
         time_elapsed // 60, time_elapsed % 60))
