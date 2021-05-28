@@ -8,12 +8,14 @@ import torch
 from livelossplot import PlotLosses
 
 
-def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler,
+                num_epochs=25, max_epochs_without_improvement=5):
     """Train a PyTorch model given model, dataloaders, criterion(loss), optimizer, learning rate scheduler."""
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
+    epochs_without_improvement = 0
 
     liveloss = PlotLosses()
 
@@ -65,9 +67,14 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
                 phase, epoch_loss, epoch_acc))
 
             # deep copy the model
-            if phase == 'val' and epoch_acc > best_acc:
-                best_acc = epoch_acc
-                best_model_wts = copy.deepcopy(model.state_dict())
+            if phase == 'val':
+                if epoch_acc > best_acc:
+                    best_acc = epoch_acc
+                    best_model_wts = copy.deepcopy(model.state_dict())
+                else:
+                    epochs_without_improvement += 1
+                    if epochs_without_improvement == max_epochs_without_improvement:
+                        print('Stopping early!')
 
             prefix = ''
             if phase == 'validation':
@@ -143,6 +150,7 @@ def find_lr(model, train_loader, device, loss_fn, optimizer, init_value=1e-8, fi
     batch_num = 0
     losses = []
     log_lrs = []
+
     for data in train_loader:
         batch_num += 1
         inputs, labels = data
