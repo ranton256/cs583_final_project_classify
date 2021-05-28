@@ -1,12 +1,12 @@
 import copy
+import math
+import matplotlib.pyplot as plt
+import numpy as np
 import time
-
 import torch
 
 # from livelossplot import PlotLosses
 
-# TODO: also move imshow
-# TODO: also move model_visualization
 # TODO: actually add visualization
 # TODO: move find learning rate stuff here.
 
@@ -79,3 +79,85 @@ def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=
     # load best model weights
     model.load_state_dict(best_model_wts)
     return model
+
+
+def imshow(inp, title=None):
+    """Imshow for Tensor."""
+    inp = inp.numpy().transpose((1, 2, 0))
+    mean = np.array([0.485, 0.456, 0.406])
+    std = np.array([0.229, 0.224, 0.225])
+    inp = std * inp + mean
+    inp = np.clip(inp, 0, 1)
+    plt.imshow(inp)
+    if title is not None:
+        plt.title(title)
+    plt.pause(0.001)  # pause a bit so that plots are updated
+
+
+def visualize_model(model, dataloaders, class_names, device, num_images=6):
+    was_training = model.training
+    model.eval()
+    images_so_far = 0
+    fig = plt.figure()
+
+    with torch.no_grad():
+        for i, (inputs, labels) in enumerate(dataloaders['val']):
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+
+            for j in range(inputs.size()[0]):
+                images_so_far += 1
+                ax = plt.subplot(num_images//2, 2, images_so_far)
+                ax.axis('off')
+                ax.set_title('predicted: {}'.format(class_names[preds[j]]))
+                imshow(inputs.cpu().data[j])
+
+                if images_so_far == num_images:
+                    model.train(mode=was_training)
+                    return
+        model.train(mode=was_training)
+
+
+# This find_lr code is based on example code from the book
+# "Programming PyTorch for Deep Learning" by Ian ointer (O'Reilly).
+# Copyright 2019 Ian Pointer
+def find_lr(model, train_loader, loss_fn, optimizer, init_value=1e-8, final_value=10.0):
+    number_in_epoch = len(train_loader) - 1
+    update_step = (final_value / init_value) ** (1 / number_in_epoch)
+    lr = init_value
+    optimizer.param_groups[0]["lr"] = lr
+    best_loss = 0.0
+    batch_num = 0
+    losses = []
+    log_lrs = []
+    for data in train_loader:
+        batch_num += 1
+        inputs, labels = data
+        inputs = inputs.to(device)
+        labels = labels.to(device)
+
+        inputs, labels = inputs, labels  # ?
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = loss_fn(outputs, labels)
+
+        # bail if loss is too bad
+        if batch_num > 1 and loss > 4 * best_loss:
+            return log_lrs[10:-5], losses[10:-5]
+
+        if loss < best_loss or batch_num == 1:
+            best_loss = loss
+
+        losses.append(loss)
+        log_lrs.append(math.log10(lr))
+
+        loss.backward()
+        optimizer.step()
+
+        lr *= update_step
+        optimizer.param_groups[0]["lr"] = lr
+    return log_lrs[10:-5], losses[10:-5]
+
