@@ -11,7 +11,7 @@ import torch
 # TODO: move find learning rate stuff here.
 
 
-def train_model(model, dataloaders, criterion, optimizer, scheduler, num_epochs=25):
+def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler, num_epochs=25):
     """Train a PyTorch model given model, dataloaders, criterion(loss), optimizer, learning rate scheduler."""
     since = time.time()
 
