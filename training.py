@@ -5,10 +5,7 @@ import numpy as np
 import time
 import torch
 
-# from livelossplot import PlotLosses
-
-# TODO: actually add visualization
-# TODO: move find learning rate stuff here.
+from livelossplot import PlotLosses
 
 
 def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer, scheduler, num_epochs=25):
@@ -18,7 +15,10 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
 
+    liveloss = PlotLosses()
+
     for epoch in range(num_epochs):
+        logs = {}
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
         print('-' * 10)
 
@@ -68,6 +68,13 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
             if phase == 'val' and epoch_acc > best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
+
+            prefix = ''
+            if phase == 'validation':
+                prefix = 'val_'
+
+            logs[prefix + 'log loss'] = epoch_loss.item()
+            logs[prefix + 'accuracy'] = epoch_acc.item()
 
         print()
 
