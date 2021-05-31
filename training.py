@@ -90,7 +90,7 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
     model.load_state_dict(best_model_wts)
     return model
 
-def test_model(model, dataloaders, dataset_sizes, device, criterion):
+def eval_model_on_test(model, dataloaders, dataset_sizes, device, criterion):
     """Evaluate a PyTorch model on 'test' dataset against criterion(loss)."""
     print('Evaluating model on test dataset')
     print('-' * 10)
