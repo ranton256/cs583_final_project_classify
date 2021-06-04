@@ -22,10 +22,11 @@ human = lion cls = n02129165
 canine_classes = ["n02085620", "n02094433", "n02099601", "n02099712", "n02106662", "n02113799"]
 feline_classes = ["n02123045", "n02123394", "n02124075", "n02125311", "n02129165"]
 
-top_dst_dir="felines_and_canines"
+top_dst_dir = "felines_and_canines"
 
 
 def label_for_class(cls):
+    """Return feline or canine label for a class from tiny imagenet classes."""
     if cls in canine_classes:
         dst_label = 'canine'
     elif cls in feline_classes:
@@ -35,7 +36,9 @@ def label_for_class(cls):
     return dst_label
 
 
+# this was used during testing to construct canine_classes and feline_classes
 def get_human_labels():
+    """Return human readable labels for synset ids used in original dataset."""
     with open("keep_labels.txt", "r") as f:
         lines = f.readlines()
         for line in lines:
@@ -46,12 +49,13 @@ def get_human_labels():
 
 
 def setup_training_data(original_data_dir):
+    """Setup training dataset by copying subset of images in our desired classes to per-class directories."""
     if not os.path.exists(top_dst_dir):
         os.makedirs(top_dst_dir)
 
     src_dir = os.path.join(original_data_dir, "train")
     bname = os.path.basename(src_dir)
-    print("bname",bname)
+    print("bname", bname)
     if not os.path.exists(top_dst_dir):
         os.makedirs(top_dst_dir)
     dst_dir = os.path.join(top_dst_dir, bname)
@@ -64,7 +68,7 @@ def setup_training_data(original_data_dir):
         if not dst_label:
             continue
 
-        dst_label_dir = dst_path = os.path.join(dst_dir,dst_label)
+        dst_label_dir = dst_path = os.path.join(dst_dir, dst_label)
         if not os.path.exists(dst_label_dir):
             os.makedirs(dst_label_dir)
 
@@ -81,6 +85,7 @@ def setup_training_data(original_data_dir):
 
 
 def read_validation_labels(val_labels_path):
+    """Extract original validation set labels from labels metadata file."""
     labels = {}
     with open(val_labels_path, "r") as f:
         lines = f.readlines()
@@ -93,6 +98,7 @@ def read_validation_labels(val_labels_path):
 
 
 def setup_validation_data(original_data_dir):
+    """Setup validation dataset by copying subset of images in our desired classes to per-class directories."""
     validation_dir = "val"
     image_src_dir = os.path.join(original_data_dir, validation_dir, "images")
 
@@ -100,8 +106,8 @@ def setup_validation_data(original_data_dir):
     print("# validation images=", len(labels))
 
     for image_fname in os.listdir(image_src_dir):
-        if not image_fname in labels:
-            continue # not part of our subset
+        if image_fname not in labels:
+            continue  # not part of our subset
 
         dst_label = labels[image_fname]
         dst_label_dir = os.path.join(top_dst_dir, validation_dir, dst_label)
@@ -118,6 +124,7 @@ def setup_validation_data(original_data_dir):
 
 
 def setup_test_data():
+    """Setup test dataset by moving a subset of training images into a separate test dataset."""
     train_data_dir = "train"
     test_data_dir = "test"
     test_percentage = 10
@@ -126,10 +133,10 @@ def setup_test_data():
     # because we don't have labeled data for original test folder of dataset.
     # so MOVE 10% of training data out to test folder
 
-    class_names = ["feline","canine"]
+    class_names = ["feline", "canine"]
     for cls in class_names:
         image_src_dir = os.path.join(top_dst_dir, train_data_dir, cls)
-        print("image_src_dir",image_src_dir)
+        print("image_src_dir", image_src_dir)
         image_dst_dir = os.path.join(top_dst_dir, test_data_dir, cls)
         print("image_dst_dir", image_dst_dir)
         if not os.path.exists(image_dst_dir):
@@ -139,7 +146,7 @@ def setup_test_data():
         random.shuffle(cls_files)
         test_cnt = len(cls_files) * test_percentage / 100
         test_cnt = int(test_cnt)
-        print("choosing {} images for test in class {}".format(test_cnt,cls))
+        print("choosing {} images for test in class {}".format(test_cnt, cls))
         test_cls_files = cls_files[:test_cnt]
         for image_fname in test_cls_files:
             src_path = os.path.join(image_src_dir, image_fname)
