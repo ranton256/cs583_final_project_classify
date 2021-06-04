@@ -10,6 +10,8 @@ new classes, canine and feline.
 The classifier is implemented using PyTorch, and setup to run in Colab, by importing
 code from this GitHub repo.
 
+## Running the Code
+
 The colab notebooks will download the original Tiny ImageNet dataset, setup the subset of it
 with labels needed for this model, train the model, visualizing the loss and accuracy, then
 finally run the model on the test portion of the dataset.
@@ -25,6 +27,8 @@ If you view the notebooks in GitHub they include an "Open in Colab" link that ca
 To change between the optimizer algorithm (i.e. SGD, ADAM, Adadelta) it is necessary to edit the block in the notebook
 where the variable optimizer_ft is assigned. Any of the four optimizer setups documented in the paper are present but
 commented out so they can be changed easily.
+
+Each training run takes around 40 minutes to train for 30 epochs.
 
 ## Paper
 The file paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf contains the report on this work.
