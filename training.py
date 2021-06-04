@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 import torch
+import torch.nn.functional as F
 
 from livelossplot import PlotLosses
 
@@ -213,4 +214,14 @@ def find_lr(model, train_loader, device, loss_fn, optimizer, init_value=1e-8, fi
         lr *= update_step
         optimizer.param_groups[0]["lr"] = lr
     return log_lrs[10:-5], losses[10:-5]
+
+
+def cross_entropy_loss(inputs, target):
+    """Own implementation of cross entropy loss."""
+    # https://pytorch.org/docs/master/generated/torch.nn.functional.log_softmax.html#torch.nn.functional.log_softmax
+
+    log_prob = -1.0 * F.log_softmax(inputs, 1)
+    loss = log_prob.gather(1, target.unsqueeze(1))
+    return loss.mean()
+
 
