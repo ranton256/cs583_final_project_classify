@@ -9,4 +9,4 @@ new classes, canine and feline.
 * K Simonyan, A Zisserman, Very Deep Convolutional Networks for Large-Scale Image Recognition arXiv preprint arXiv:1409.1556
 * Y Ma, Tiny ImageNet Challenge  cs231n.stanford.edu, http://cs231n.stanford.edu/reports/2017/pdfs/935.pdf
 
-
+For a complete set of references see paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf
