@@ -4,6 +4,8 @@ import json
 idx2label = []
 cls2label = {}
 
+# This script creates a mapping from imagenet synset ids to human labels using a separate data file.
+
 # The imagenet_class_index.json file is from Keras for imagenet human name mapping
 # https://github.com/raghakot/keras-vis/blob/master/resources/imagenet_class_index.json
 

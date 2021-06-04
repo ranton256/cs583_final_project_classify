@@ -42,21 +42,22 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
                 # zero the parameter gradients
                 optimizer.zero_grad()
 
-                # forward
-                # track history if only in train
+                # Only track history if only in train
                 with torch.set_grad_enabled(phase == 'train'):
                     outputs = model(inputs)
                     _, preds = torch.max(outputs, 1)
                     loss = criterion(outputs, labels)
 
-                    # backward + optimize only if in training phase
+                    # Don't train except in training phase.
                     if phase == 'train':
                         loss.backward()
                         optimizer.step()
 
-                # statistics
+                # Calculate some statistics for loss and accuracy.
                 running_loss += loss.item() * inputs.size(0)
                 running_corrects += torch.sum(preds == labels.data)
+
+            # Update learning rate scheduler.
             if phase == 'train':
                 scheduler.step()
 
@@ -66,7 +67,7 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
             print('{} Loss: {:.4f} Acc: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
 
-            # deep copy the model
+            # Make a deep copy of the model.
             if phase == 'val':
                 if epoch_acc > best_acc:
                     best_acc = epoch_acc
@@ -98,6 +99,7 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
     return model
 
 
+# This function is from https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
 def imshow(inp, title=None):
     """Imshow for Tensor."""
     inp = inp.numpy().transpose((1, 2, 0))
@@ -115,21 +117,21 @@ def visualize_model(model, dataloaders, class_names, device, num_images=6):
     was_training = model.training
     model.eval()
     images_so_far = 0
+    # Create a figure to be used by imshow()
     fig = plt.figure()
 
     with torch.no_grad():
-        for i, (inputs, labels) in enumerate(dataloaders['val']):
+        for i, (inputs, _) in enumerate(dataloaders['val']):
             inputs = inputs.to(device)
-            labels = labels.to(device)
 
             outputs = model(inputs)
-            _, preds = torch.max(outputs, 1)
+            _, predicted = torch.max(outputs, 1)
 
             for j in range(inputs.size()[0]):
                 images_so_far += 1
                 ax = plt.subplot(num_images//2, 2, images_so_far)
                 ax.axis('off')
-                ax.set_title('predicted: {}'.format(class_names[preds[j]]))
+                ax.set_title('predicted: {}'.format(class_names[predicted[j]]))
                 imshow(inputs.cpu().data[j])
 
                 if images_so_far == num_images:
