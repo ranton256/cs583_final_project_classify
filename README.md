@@ -18,9 +18,9 @@ finally run the model on the test portion of the dataset.
 
 There are several colab notebooks to run different variants of training for the classifer.
 
-* cs583_final_project_classifier_from_scratch.ipynb - Trains the model from scratch.
-* cs583_final_project_classifier_transfer.ipynb - Uses transfer learning based on pretrained model weights from ImageNet.
-* cs583_final_project_classifier_custom_loss.ipynb - Trains the model from scratch using a custom implementation of cross entropy loss.
+* [cs583_final_project_classifier_from_scratch.ipynb](cs583_final_project_classifier_from_scratch.ipynb) - Trains the model from scratch.
+* [cs583_final_project_classifier_transfer.ipynb](cs583_final_project_classifier_transfer.ipynb) - Uses transfer learning based on pretrained model weights from ImageNet.
+* [cs583_final_project_classifier_custom_loss.ipynb](cs583_final_project_classifier_custom_loss.ipynb) - Trains the model from scratch using a custom implementation of cross entropy loss.
 
 If you view the notebooks in GitHub they include an "Open in Colab" link that can be used to run them.
 
@@ -31,10 +31,10 @@ commented out so they can be changed easily.
 Each training run takes around 40 minutes to train for 30 epochs.
 
 ## Paper
-The file paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf contains the report on this work.
+The file [paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf](paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf) contains the report on this work.
 
 ## References
 * K Simonyan, A Zisserman, Very Deep Convolutional Networks for Large-Scale Image Recognition arXiv preprint arXiv:1409.1556
 * Y Ma, Tiny ImageNet Challenge  cs231n.stanford.edu, http://cs231n.stanford.edu/reports/2017/pdfs/935.pdf
 
-For a complete set of references see paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf
+For a complete set of references see the paper [Image Classification using VGG Network and Transfer Learning](paper/Image_Classification_using_VGG_Network_and_Transfer_Learning.pdf)
