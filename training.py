@@ -98,6 +98,38 @@ def train_model(model, dataloaders, dataset_sizes, device, criterion, optimizer,
     model.load_state_dict(best_model_wts)
     return model
 
+def eval_model_on_test(model, dataloaders, dataset_sizes, device, criterion):
+    """Evaluate a PyTorch model on 'test' dataset against criterion(loss)."""
+    print('Evaluating model on test dataset')
+    print('-' * 10)
+
+    model.eval()   # Set model to evaluate mode
+
+    running_loss = 0.0
+    running_corrects = 0
+
+    phase = 'test'
+    # Iterate over data and evaluate model.
+    for inputs, labels in dataloaders[phase]:
+        inputs = inputs.to(device)
+        labels = labels.to(device)
+
+        with torch.set_grad_enabled(phase == 'train'):
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            loss = criterion(outputs, labels)
+
+        running_loss += loss.item() * inputs.size(0)
+        running_corrects += torch.sum(preds == labels.data)
+
+    epoch_loss = running_loss / dataset_sizes[phase]
+    epoch_acc = running_corrects.double() / dataset_sizes[phase]
+
+    print('{} Loss: {:.4f} Acc: {:.4f}'.format(
+        phase, epoch_loss, epoch_acc))
+
+    print()
+
 
 # This function is from https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
 def imshow(inp, title=None):
